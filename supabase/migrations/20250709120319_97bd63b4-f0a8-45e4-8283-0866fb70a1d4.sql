@@ -1,27 +1,6 @@
 -- Criar função para atualizar updated_at (se não existir)
-CREATE OR REPLACE FUNCTION public.update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
 -- Criar tabela para registrar retiradas de amostras
-CREATE TABLE public.retiradas_amostras (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  amostra_id UUID NOT NULL REFERENCES public.amostras(id) ON DELETE CASCADE,
-  codigo_amostra VARCHAR NOT NULL,
-  usuario_retirada VARCHAR NOT NULL,
-  data_retirada TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  status_textual VARCHAR NOT NULL,
-  metodo_identificacao VARCHAR NOT NULL, -- 'qrcode', 'manual', 'lote'
-  observacoes TEXT,
-  ip_address INET,
-  user_agent TEXT,
-  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
-);
+
 
 -- Criar índices para melhor performance
 CREATE INDEX idx_retiradas_amostras_amostra_id ON public.retiradas_amostras(amostra_id);
