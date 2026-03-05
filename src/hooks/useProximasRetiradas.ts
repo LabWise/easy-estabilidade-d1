@@ -12,7 +12,6 @@ interface ProximaRetirada {
     id: string;
     codigo: string;
     lote: string;
-    nome_produto?: string;
     produtos?: {
       nome: string;
     };
@@ -46,7 +45,6 @@ export const useProximasRetiradas = () => {
             id,
             codigo,
             lote,
-            nome_produto,
             produtos (
               nome
             ),
@@ -100,8 +98,8 @@ export const useProximasRetiradas = () => {
           bValue = b.amostras?.lote || '';
           break;
         case 'produto':
-          aValue = a.amostras?.nome_produto || a.amostras?.produtos?.nome || '';
-          bValue = b.amostras?.nome_produto || b.amostras?.produtos?.nome || '';
+          aValue = a.amostras?.produtos?.nome || '';
+          bValue = b.amostras?.produtos?.nome || '';
           break;
         default:
           return 0;

@@ -42,7 +42,7 @@ const ProximasRetiradas = () => {
       'Tempo de Coleta': retirada.tempo_coleta,
       'Data Programada': formatDateSafe(retirada.data_programada),
       'Lote': retirada.amostras?.lote || '',
-      'Produto': retirada.amostras?.nome_produto || retirada.amostras?.produtos?.nome || '',
+      'Produto': retirada.amostras?.produtos?.nome || '',
       'Tipo Estabilidade': retirada.amostras?.tipos_estabilidade?.sigla || '',
       'Status': retirada.realizada ? 'Realizada' : 'Programada'
     }));
@@ -200,7 +200,7 @@ const ProximasRetiradas = () => {
                       <TableBody>
                         {proximasRetiradasPaginadas.map((retirada) => {
                           const lote = retirada.amostras?.lote || '-';
-                          const produto = retirada.amostras?.nome_produto || retirada.amostras?.produtos?.nome || '-';
+                          const produto = retirada.amostras?.produtos?.nome || '-';
                           
                           return (
                             <TableRow key={retirada.id}>

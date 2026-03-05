@@ -97,12 +97,12 @@ export const TabelaAmostras: React.FC<TabelaAmostrasProps> = ({
               onClick={() => onRowClick(amostra)}
             >
               <TableCell className="font-mono">{amostra.codigo}</TableCell>
-              <TableCell className="font-medium" title={amostra.nome_produto || amostra.produtos?.nome || 'N/A'}>
-                {truncateText(amostra.nome_produto || amostra.produtos?.nome || 'N/A', 20)}
+              <TableCell className="font-medium" title={amostra.produtos?.nome || 'N/A'}>
+                {truncateText(amostra.produtos?.nome || 'N/A', 20)}
               </TableCell>
               <TableCell title={amostra.lote}>{truncateText(amostra.lote, 20)}</TableCell>
-              <TableCell title={amostra.fabricante || amostra.produtos?.fabricante || 'N/A'}>
-                {truncateText(amostra.fabricante || amostra.produtos?.fabricante || 'N/A', 20)}
+              <TableCell title={amostra.produtos?.fabricante || 'N/A'}>
+                {truncateText(amostra.produtos?.fabricante || 'N/A', 20)}
               </TableCell>
               <TableCell>
                 <Badge variant="outline">{amostra.tipos_estabilidade?.sigla || 'N/A'}</Badge>

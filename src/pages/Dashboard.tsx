@@ -174,7 +174,7 @@ const Dashboard = () => {
                             {retirada.amostras?.codigo} - {retirada.codigo_versao}
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            {retirada.amostras?.nome_produto || 'Produto não informado'}
+                            {retirada.amostras?.produtos?.nome || 'Produto não informado'}
                           </div>
                           <div className="text-xs text-muted-foreground">
                             Lote: {retirada.amostras?.lote} | {retirada.tempo_coleta}

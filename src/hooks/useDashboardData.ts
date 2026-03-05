@@ -106,7 +106,7 @@ export const useDashboardData = () => {
           *,
           amostras(
             codigo,
-            nome_produto,
+            produtos(nome),
             lote,
             tipos_estabilidade(nome, sigla)
           )
