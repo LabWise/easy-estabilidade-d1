@@ -141,6 +141,12 @@ BEGIN
     -- data_vencimento (date null in user schema)
     ALTER TABLE public.amostras ALTER COLUMN data_vencimento DROP NOT NULL;
 
+    -- produto_id (exists in DB but not in user schema, causing Not Null violation on insert)
+    -- Making it nullable to support legacy data while allowing new inserts without it
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'amostras' AND column_name = 'produto_id') THEN
+        ALTER TABLE public.amostras ALTER COLUMN produto_id DROP NOT NULL;
+    END IF;
+
 END $$;
 
 -- Add indexes if they don't exist
