@@ -105,23 +105,24 @@ export const amostraService = {
       .from('usuarios')
       .select('empresa_id')
       .eq('auth_id', (await supabase.auth.getUser()).data.user?.id)
-      .single();
+      .maybeSingle(); // Alterado para maybeSingle para não estourar erro se não encontrar
 
-    if (userError || !userData?.empresa_id) {
-      console.error('Erro ao buscar empresa do usuário:', userError);
-      throw new Error('Usuário sem empresa vinculada ou erro ao buscar dados do usuário');
-    }
-
-    const empresaId = userData.empresa_id;
-
+    // Se não encontrou usuário ou deu erro, vamos tentar usar o DEFAULT do banco
+    // removendo o campo empresa_id do objeto de inserção
+    
     // Atualizar o código nos dados
     dadosAmostra.codigo = codigoFinal;
     
-    // Injetar empresa_id explicitamente
-    const dadosParaInserir = {
-      ...dadosAmostra,
-      empresa_id: empresaId
-    };
+    let dadosParaInserir = { ...dadosAmostra };
+    
+    if (userData?.empresa_id) {
+      dadosParaInserir.empresa_id = userData.empresa_id;
+    } else {
+      // Se não temos empresa_id, removemos para usar o default do banco
+      // O banco tem o default get_current_user_empresa_id()
+      delete dadosParaInserir.empresa_id;
+      console.warn('Usuário sem empresa_id explícito, usando DEFAULT do banco');
+    }
     
     // 1. Inserir a amostra principal
     const { data: amostraData, error: amostraError } = await supabase
@@ -145,7 +146,19 @@ export const amostraService = {
     
     // 2. Se for pós registro e há análises selecionadas, salvar na tabela amostra_analises
     if (dadosAmostra.tipo_registro === 'pos-registro' && analisesIds && analisesIds.length > 0) {
-      // Usar empresaId já obtido anteriormente
+      // Usar empresaId já obtido anteriormente ou buscar novamente se necessário
+      let empresaId = userData?.empresa_id;
+      
+      if (!empresaId) {
+        // Fallback: tentar buscar novamente
+        const { data: userRetry } = await supabase
+          .from('usuarios')
+          .select('empresa_id')
+          .eq('auth_id', (await supabase.auth.getUser()).data.user?.id)
+          .maybeSingle();
+          
+        empresaId = userRetry?.empresa_id;
+      }
       
       // Primeiro, gerar o cronograma para obter as subamostras
       const tipoSigla = tiposEstabilidade.find(t => t.id === dadosAmostra.tipo_estabilidade_id)?.sigla;
@@ -179,7 +192,7 @@ export const amostraService = {
               amostra_id: amostra.id,
               tipo_analise_id: analiseId,
               codigo_subamostra_id: cronogramaItem.id,
-              empresa_id: empresaId
+              empresa_id: empresaId || undefined // Se for null/undefined, não envia para usar default
             });
           }
         }
@@ -189,7 +202,7 @@ export const amostraService = {
           analisesParaInserir.push({
             amostra_id: amostra.id,
             tipo_analise_id: analiseId,
-            empresa_id: empresaId
+            empresa_id: empresaId || undefined // Se for null/undefined, não envia para usar default
           });
         }
       }
