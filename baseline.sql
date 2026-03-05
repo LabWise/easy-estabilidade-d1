@@ -579,12 +579,27 @@ CREATE POLICY "Todos usuarios autenticados podem atualizar amostra_ifas" ON publ
 DROP POLICY IF EXISTS "Administradores podem deletar amostra_ifas" ON public.amostra_ifas;
 CREATE POLICY "Administradores podem deletar amostra_ifas" ON public.amostra_ifas FOR DELETE USING (get_user_profile_type() = 'administrador');
 
+-- IFA Policies
+ALTER TABLE public.ifa ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Todos usuarios autenticados podem ver ifa" ON public.ifa;
+CREATE POLICY "Todos usuarios autenticados podem ver ifa" ON public.ifa FOR SELECT USING (empresa_id = get_current_user_empresa_id());
+
+DROP POLICY IF EXISTS "Todos usuarios autenticados podem criar ifa" ON public.ifa;
+CREATE POLICY "Todos usuarios autenticados podem criar ifa" ON public.ifa FOR INSERT WITH CHECK (empresa_id = get_current_user_empresa_id());
+
+DROP POLICY IF EXISTS "Todos usuarios autenticados podem atualizar ifa" ON public.ifa;
+CREATE POLICY "Todos usuarios autenticados podem atualizar ifa" ON public.ifa FOR UPDATE USING (empresa_id = get_current_user_empresa_id()) WITH CHECK (empresa_id = get_current_user_empresa_id());
+
+DROP POLICY IF EXISTS "Todos usuarios autenticados podem deletar ifa" ON public.ifa;
+CREATE POLICY "Todos usuarios autenticados podem deletar ifa" ON public.ifa FOR DELETE USING (empresa_id = get_current_user_empresa_id());
+
 -- Views and View Policies
 DROP POLICY IF EXISTS "Todos usuarios autenticados podem ver todos os usuarios" ON public.usuarios;
 CREATE OR REPLACE VIEW public.usuarios_publicos AS SELECT id,nome,profile_type,empresa_id,ativo,created_at FROM public.usuarios WHERE ativo = true;
 CREATE OR REPLACE VIEW public.usuarios_completos AS SELECT * FROM public.usuarios;
-ALTER VIEW public.usuarios_publicos SET (security_barrier = true);
-ALTER VIEW public.usuarios_completos SET (security_barrier = true);
+ALTER VIEW public.usuarios_publicos SET (security_barrier = true, security_invoker = true);
+ALTER VIEW public.usuarios_completos SET (security_barrier = true, security_invoker = true);
 
 DROP POLICY IF EXISTS "Users can view their own complete data" ON public.usuarios;
 CREATE POLICY "Users can view their own complete data" ON public.usuarios FOR SELECT TO authenticated USING (auth.uid() = auth_id);
