@@ -111,7 +111,7 @@ export const AppSidebar = () => {
       <SidebarFooter className="border-t border-sidebar-border p-4">
         {!isCollapsed ? (
           <div className="text-xs text-muted-foreground space-y-1">
-            <p>Copyright © 2025 LabWise.</p>
+            <p>Copyright © 2026 LabWise.</p>
             <p>Todos os direitos reservados.</p>
             <p>LabWise Ltda</p>
             <p className="text-primary">suporte@easyestabilidade.com.br</p>

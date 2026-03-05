@@ -121,7 +121,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onLogin, loading, error })
           
           <div className="text-center mt-6 pt-4 border-t">
             <p className="text-xs text-muted-foreground">
-              Copyright © 2025 LabWise. Todos os direitos reservados.
+              Copyright © 2026 LabWise. Todos os direitos reservados.
             </p>
           </div>
         </CardContent>

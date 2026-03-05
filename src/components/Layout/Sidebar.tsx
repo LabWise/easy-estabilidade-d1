@@ -69,7 +69,7 @@ export const Sidebar = () => {
       {/* Footer */}
       <div className="p-4 border-t border-gray-200">
         <div className="text-xs text-gray-500 space-y-1">
-          <p>Copyright © 2025 LabWise.</p>
+          <p>Copyright © 2026 LabWise.</p>
           <p>Todos os direitos reservados.</p>
           <p>LabWise Ltda</p>
           <p className="text-blue-600">suporte@easyestabilidade.com.br</p>
