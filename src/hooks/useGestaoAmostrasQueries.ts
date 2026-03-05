@@ -15,11 +15,9 @@ export const useGestaoAmostrasQueries = () => {
         .from('amostras')
         .select(`
           *,
-          produtos!amostras_tipo_controlado_fkey(id, nome, fabricante, codigo, principio_ativo, concentracao, forma_farmaceutica),
+          produtos(id, nome, fabricante, codigo, principio_ativo, concentracao, forma_farmaceutica),
           equipamentos(id, nome, codigo, tipo, localizacao),
           tipos_estabilidade(nome, sigla, descricao),
-          unidades!amostras_un_controlado_fkey(id, unidade),
-          produtos_controlados:produtos!amostras_tipo_controlado_fkey(id, nome),
           cronograma_retiradas(id, realizada)
         `)
         .order('created_at', { ascending: false });
