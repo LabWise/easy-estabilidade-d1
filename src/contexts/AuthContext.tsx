@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Limpar localStorage do Supabase de forma mais específica
     try {
       const authKeys = [
-        'sb-vfhebnctlsyiduwciiuo-auth-token',
+        'sb-vgxgqvbiqzzidovizzhc-auth-token',
         'supabase.auth.token'
       ];
       
@@ -66,7 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // Limpar apenas chaves relacionadas ao auth do Supabase
       Object.keys(localStorage).forEach(key => {
-        if (key.startsWith('sb-') && key.includes('auth') && key.includes('vfhebnctlsyiduwciiuo')) {
+        if (key.startsWith('sb-') && key.includes('auth') && key.includes('vgxgqvbiqzzidovizzhc')) {
           try {
             localStorage.removeItem(key);
           } catch (e) {
