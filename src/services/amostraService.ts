@@ -100,13 +100,33 @@ export const amostraService = {
       throw new Error('Não foi possível gerar um código único após várias tentativas');
     }
     
+    // Buscar o empresa_id do usuário atual para garantir integridade
+    const { data: userData, error: userError } = await supabase
+      .from('usuarios')
+      .select('empresa_id')
+      .eq('auth_id', (await supabase.auth.getUser()).data.user?.id)
+      .single();
+
+    if (userError || !userData?.empresa_id) {
+      console.error('Erro ao buscar empresa do usuário:', userError);
+      throw new Error('Usuário sem empresa vinculada ou erro ao buscar dados do usuário');
+    }
+
+    const empresaId = userData.empresa_id;
+
     // Atualizar o código nos dados
     dadosAmostra.codigo = codigoFinal;
+    
+    // Injetar empresa_id explicitamente
+    const dadosParaInserir = {
+      ...dadosAmostra,
+      empresa_id: empresaId
+    };
     
     // 1. Inserir a amostra principal
     const { data: amostraData, error: amostraError } = await supabase
       .from('amostras')
-      .insert([dadosAmostra])
+      .insert([dadosParaInserir])
       .select();
     
     if (amostraError) {
@@ -125,15 +145,8 @@ export const amostraService = {
     
     // 2. Se for pós registro e há análises selecionadas, salvar na tabela amostra_analises
     if (dadosAmostra.tipo_registro === 'pos-registro' && analisesIds && analisesIds.length > 0) {
-      // Buscar o empresa_id do usuário atual
-      const { data: userData } = await supabase
-        .from('usuarios')
-        .select('empresa_id')
-        .eq('auth_id', (await supabase.auth.getUser()).data.user?.id)
-        .single();
-
-      const empresaId = userData?.empresa_id;
-
+      // Usar empresaId já obtido anteriormente
+      
       // Primeiro, gerar o cronograma para obter as subamostras
       const tipoSigla = tiposEstabilidade.find(t => t.id === dadosAmostra.tipo_estabilidade_id)?.sigla;
       
@@ -403,15 +416,18 @@ export const amostraService = {
       // Campos Produto Controlado
       produto_controlado: formData.produtoControlado === 'true',
       qtd_controlado: formData.produtoControlado === 'true' && formData.qtdControlado ? parseFloat(formData.qtdControlado) : null,
-      un_controlado: formData.produtoControlado === 'true' && formData.unidadeControlado ? parseInt(formData.unidadeControlado) : null,
-      tipo_controlado: formData.produtoControlado === 'true' ? formData.tipoControlado : null,
+      un_controlado: formData.produtoControlado === 'true' && formData.unidadeControlado ? formData.unidadeControlado : null,
+      tipo_controlado: formData.produtoControlado === 'true' && formData.tipoControlado ? formData.tipoControlado : null,
       usuario_responsavel: usuarioNome ? sanitizeInput(usuarioNome, 'Usuário Responsável') : null,
       status: 'ativo',
       quantidade_inicial: 1,
       quantidade_atual: 1,
-      finalizada: false
-      // empresa_id will be set automatically by database default
+      finalizada: false,
+      // empresa_id: null // Removido para que o banco use o valor padrão (get_current_user_empresa_id())
     };
+
+    // Remove empresa_id se estiver null/undefined para garantir que o default do banco seja usado
+    const { empresa_id, ...dataToInsert } = sanitizedData as any;
 
     // Valida os dados principais com schema de segurança
     try {
@@ -431,7 +447,7 @@ export const amostraService = {
       );
     }
 
-    return sanitizedData;
+    return dataToInsert;
   }
 };
 
