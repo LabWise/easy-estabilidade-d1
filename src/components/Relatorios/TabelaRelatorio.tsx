@@ -14,8 +14,8 @@ interface DadoExpandido {
   id: string;
   codigo: string;
   lote: string;
-  nome_produto: string | null;
-  fabricante: string | null;
+  nome_produto?: string | null;
+  fabricante?: string | null;
   status: string | null;
   produtos?: { nome: string; fabricante: string; } | null;
   equipamentos?: { nome: string; } | null;

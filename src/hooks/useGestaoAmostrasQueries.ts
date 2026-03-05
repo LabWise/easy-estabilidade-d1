@@ -15,7 +15,7 @@ export const useGestaoAmostrasQueries = () => {
         .from('amostras')
         .select(`
           *,
-          produtos(id, nome, fabricante, codigo, principio_ativo, concentracao, forma_farmaceutica),
+          produtos!amostras_produto_id_fkey(id, nome, fabricante, codigo, principio_ativo, concentracao, forma_farmaceutica),
           equipamentos(id, nome, codigo, tipo, localizacao),
           tipos_estabilidade(nome, sigla, descricao),
           cronograma_retiradas(id, realizada)

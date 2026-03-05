@@ -398,8 +398,7 @@ export const useRetiradaAmostra = () => {
           un_controlado,
           tipo_controlado,
           produto_controlado,
-          unidades!inner(unidade),
-          produtos!inner(nome)
+          produtos(nome)
         `)
         .eq('id', amostraId)
         .eq('produto_controlado', true)
@@ -409,12 +408,15 @@ export const useRetiradaAmostra = () => {
         return null;
       }
 
+      // Casting para any para evitar erros de tipagem do Supabase quando a relação não é encontrada nos tipos
+      const dados = data as any;
+
       return {
-        qtd_controlado: data.qtd_controlado || 0,
-        un_controlado: data.un_controlado || 0,
-        tipo_controlado: data.tipo_controlado || '',
-        unidade: data.unidades?.unidade || '',
-        produto_nome: data.produtos?.nome || ''
+        qtd_controlado: dados.qtd_controlado || 0,
+        un_controlado: dados.un_controlado || 0,
+        tipo_controlado: dados.tipo_controlado || '',
+        unidade: dados.un_controlado?.toString() || '',
+        produto_nome: dados.produtos?.nome || ''
       };
     } catch (error) {
       console.error('Erro ao buscar dados de produto controlado:', error);

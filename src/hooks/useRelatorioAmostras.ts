@@ -8,8 +8,8 @@ export interface AmostraComCronograma {
   id: string;
   codigo: string;
   lote: string;
-  nome_produto: string | null;
-  fabricante: string | null;
+  nome_produto?: string | null;
+  fabricante?: string | null;
   data_entrada: string;
   status: string | null;
   produtos?: {
@@ -63,8 +63,6 @@ export const useRelatorioAmostras = () => {
           id,
           codigo,
           lote,
-          nome_produto,
-          fabricante,
           data_entrada,
           status,
           produtos(nome, fabricante),
@@ -97,7 +95,7 @@ export const useRelatorioAmostras = () => {
       }
 
       console.log('Amostras com cronograma encontradas:', data?.length || 0);
-      return data as AmostraComCronograma[];
+      return data as unknown as AmostraComCronograma[];
     }
   });
 
@@ -114,10 +112,8 @@ export const useRelatorioAmostras = () => {
       amostrasParaFiltrar = amostrasParaFiltrar.filter(amostra =>
         amostra.codigo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         amostra.produtos?.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        amostra.nome_produto?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         amostra.lote?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        amostra.produtos?.fabricante?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        amostra.fabricante?.toLowerCase().includes(searchTerm.toLowerCase())
+        amostra.produtos?.fabricante?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -220,9 +216,9 @@ export const useRelatorioAmostras = () => {
         amostra.cronograma_retiradas.forEach(cronograma => {
           csvData.push([
             cronograma.codigo_versao || amostra.codigo,
-            amostra.produtos?.nome || amostra.nome_produto || '',
+            amostra.produtos?.nome || '',
             amostra.lote,
-            amostra.produtos?.fabricante || amostra.fabricante || '',
+            amostra.produtos?.fabricante || '',
             amostra.tipos_estabilidade?.sigla || '',
             amostra.equipamentos?.nome || '',
             amostra.status || 'ativo',
@@ -242,9 +238,9 @@ export const useRelatorioAmostras = () => {
         // Amostra sem cronograma
         csvData.push([
           amostra.codigo,
-          amostra.produtos?.nome || amostra.nome_produto || '',
+          amostra.produtos?.nome || '',
           amostra.lote,
-          amostra.produtos?.fabricante || amostra.fabricante || '',
+          amostra.produtos?.fabricante || '',
           amostra.tipos_estabilidade?.sigla || '',
           amostra.equipamentos?.nome || '',
           amostra.status || 'ativo',

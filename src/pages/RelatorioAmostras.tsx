@@ -61,9 +61,9 @@ const RelatorioAmostras = () => {
       // Aba 1: Dados detalhados
       const wsData = XLSX.utils.json_to_sheet(dadosExpandidos.map(item => ({
         'Código': item.cronograma?.codigo_versao || item.codigo,
-        'Produto': item.produtos?.nome || item.nome_produto || '',
+        'Produto': item.produtos?.nome || '',
         'Lote': item.lote,
-        'Fabricante': item.produtos?.fabricante || item.fabricante || '',
+        'Fabricante': item.produtos?.fabricante || '',
         'Equipamento': item.equipamentos?.nome || '',
         'Tipo Estabilidade': item.tipos_estabilidade?.sigla || '',
         'Status': item.status,
